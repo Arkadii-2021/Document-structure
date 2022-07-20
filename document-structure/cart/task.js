@@ -3,23 +3,10 @@ const cartProducts = document.getElementsByClassName('cart__products');
 const productQuantityInc = document.getElementsByClassName('product__quantity-control_inc');
 const productQuantityDec = document.getElementsByClassName('product__quantity-control_dec');
 const productAdd = document.getElementsByClassName('product__add');
-const quantityValue = document.getElementsByClassName('product__quantity-value'); 
-const cartProductCount = document.getElementsByClassName('cart__product-count'); 
-const cartProduct = document.getElementsByClassName('cart__product');
+const quantityValue = document.getElementsByClassName('product__quantity-value');
+const cartProductCount = document.getElementsByClassName('cart__product-count');
 
 const quantityProducts = new Array();
-
-
-function findIndexProductCount(attrId) {
-	let countAttrItem = ''
-	Array.from(cartProduct).forEach(function(elAttribute, i) {
-		if (event.target.parentElement.parentElement.parentElement.getAttribute('data-id') == elAttribute.getAttribute('data-id')) {
-			let sum = parseInt(elAttribute.children[1].innerText) + parseInt(event.target.previousSibling.previousSibling.children[1].textContent.trim());
-			countAttrItem = sum;
-		}
-	})
-	return countAttrItem;
-};
 
 Array.from(productQuantityInc).forEach(function(btn, i) {
 	btn.addEventListener('click', (event) => {
@@ -39,7 +26,14 @@ Array.from(productAdd).forEach(function(btn, i) {
 		let ids = products[i];
 		let checkId = document.getElementsByClassName('cart__product');
 		if (quantityProducts.includes(`${dataId}`)) {
-			cartProductCount[i].innerText = findIndexProductCount(event.target);
+            for (j = 0; j < checkId.length; j++){
+                if (checkId[j].getAttribute('data-id') === dataId) {
+                    console.log(checkId[j].getAttribute('data-id'))
+                    let n = parseInt(checkId[j].textContent) + parseInt(quantityValue[i].innerText);
+                    cartProductCount[j].innerText = n;
+                }
+            }
+
 		} else if (quantityValue[i].textContent.trim() != 0) {
 			let addContext = '<div class="cart__product" data-id="' + dataId + '"><img class="cart__product-image" src="' + products[i].childNodes[3].currentSrc + '"><div class="cart__product-count">' + quantityValue[i].textContent.trim() + '</div></div>';
 			cartProducts[0].insertAdjacentHTML('beforeEnd', addContext);
