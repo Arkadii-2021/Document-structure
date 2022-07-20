@@ -1,35 +1,49 @@
-const hasTooltip = document.getElementsByClassName('has-tooltip');
-const tooltipElement = document.getElementsByClassName('tooltip tooltip_active');
+const products = document.getElementsByClassName('product');
+const cartProducts = document.getElementsByClassName('cart__products');
+const productQuantityInc = document.getElementsByClassName('product__quantity-control_inc');
+const productQuantityDec = document.getElementsByClassName('product__quantity-control_dec');
+const productAdd = document.getElementsByClassName('product__add');
+const quantityValue = document.getElementsByClassName('product__quantity-value'); 
+const cartProductCount = document.getElementsByClassName('cart__product-count'); 
+const cartProduct = document.getElementsByClassName('cart__product');
 
-function removeTooltipClasses() {
-	Array.from(tooltipElement).forEach(tooltip => {
-	tooltip.remove();
-})};
+const quantityProducts = new Array();
 
-function tipVisible() {
-	Array.from(hasTooltip).forEach(tip => {
-	tip.addEventListener('click', (event) => {
-		if (!tooltipElement[0]) {
-			let tipName = '<div class="tooltip tooltip_active">' + event.target.title + '</div>'
-			event.target.insertAdjacentHTML('afterEnd', tipName);
-			} else if (tooltipElement[0]) {
-				removeTooltipClasses();
-			} else {
-				tooltipElement[tooltipElement.length - 1].classList.remove('tooltip_active');
-			}
-		
-		getCoords(event.target, tip);
-		event.preventDefault();
-	});
-});
-}
 
-function getCoords(hasElement, tipElement) {
-	let tip = hasElement.getBoundingClientRect();
-	let tipPosition = tipElement.getBoundingClientRect();
-	if (tooltipElement[0]) {
-		tooltipElement[0].style = "left: " + tip.left + "px; top: " + (tipPosition.top + 20) + "px;";
-	}
+function findIndexProductCount(attrId) {
+	let countAttrItem = ''
+	Array.from(cartProduct).forEach(function(elAttribute, i) {
+		if (event.target.parentElement.parentElement.parentElement.getAttribute('data-id') == elAttribute.getAttribute('data-id')) {
+			let sum = parseInt(elAttribute.children[1].innerText) + parseInt(event.target.previousSibling.previousSibling.children[1].textContent.trim());
+			countAttrItem = sum;
+		}
+	})
+	return countAttrItem;
 };
 
-tipVisible();
+Array.from(productQuantityInc).forEach(function(btn, i) {
+	btn.addEventListener('click', (event) => {
+		quantityValue[i].innerText++;
+	})
+});
+
+Array.from(productQuantityDec).forEach(function(btn, i) {
+	btn.addEventListener('click', (event) => {
+		quantityValue[i].innerText >= 1 ? quantityValue[i].innerText-- : quantityValue[i].innerText == 0;
+	})
+});
+
+Array.from(productAdd).forEach(function(btn, i) {
+	btn.addEventListener('click', (event) => {
+		let dataId = products[i].getAttribute('data-id');
+		let ids = products[i];
+		let checkId = document.getElementsByClassName('cart__product');
+		if (quantityProducts.includes(`${dataId}`)) {
+			cartProductCount[i].innerText = findIndexProductCount(event.target);
+		} else if (quantityValue[i].textContent.trim() != 0) {
+			let addContext = '<div class="cart__product" data-id="' + dataId + '"><img class="cart__product-image" src="' + products[i].childNodes[3].currentSrc + '"><div class="cart__product-count">' + quantityValue[i].textContent.trim() + '</div></div>';
+			cartProducts[0].insertAdjacentHTML('beforeEnd', addContext);
+			quantityProducts.push(dataId);
+		}
+	})
+});
